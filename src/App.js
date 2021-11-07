@@ -1,4 +1,5 @@
 import React from 'react';
+import Cart from './components/Cart';
 import Filter from './components/Filter';
 import Products from "./components/Products";
 import data from './data.json';
@@ -9,7 +10,8 @@ class App extends React.Component {
     this.state={
       products: data.products,
       size: "",
-      sort: ""
+      sort: "",
+      cartItems: []
     }
   }
   filterProduct = (e)=>{
@@ -46,6 +48,29 @@ class App extends React.Component {
       })
     })
   }
+  removeProduct = (product)=>{
+    const cartItemsUpdated = this.state.cartItems.slice();
+
+    this.setState({
+      ...this.state,
+      cartItems: cartItemsUpdated.filter(item => item._id!==product._id)
+    })
+  }
+  addToCart = (product)=>{
+    const items = this.state.cartItems.slice();
+    let alreadyInCart=false;
+    items.forEach(item =>{
+      if(item._id===product._id){
+        alreadyInCart=true;
+        item.count++;
+      } 
+    })
+    if(!alreadyInCart){
+      product.count=1;
+      items.push(product);
+    }
+      this.setState({...this.state, cartItems:items})
+  }
   render(){
     return (
       <div className="grid-container">
@@ -60,9 +85,15 @@ class App extends React.Component {
                 filterProduct={this.filterProduct}
                 filterSize={this.filterSize}
               />
-              <Products products={this.state.products}/>
+              <Products products={this.state.products}
+                addToCart={this.addToCart}
+              />
             </div>
-            <div className="products-right">Sidebar</div>
+            <div className="products-right">
+              <Cart cartItems={this.state.cartItems} 
+                removeProduct={this.removeProduct}
+              />
+            </div>
         </section>
         <footer className="footer">
           All rights reserved.
