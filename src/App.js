@@ -12,6 +12,40 @@ class App extends React.Component {
       sort: ""
     }
   }
+  filterProduct = (e)=>{
+    const sort = e.target.value;
+    this.setState({
+      sort: sort,
+      products: this.state.products.slice().sort((a,b)=>
+        sort==='lowest'?
+          a.price>b.price?
+            1:-1
+          : sort==='highest'?
+            a.price<b.price
+              ?
+                1:-1
+            :sort==='latest'?
+              a._id<b._id
+                ?
+                1:-1
+            :1
+      )
+    })
+    
+  }
+  filterSize=(e)=>{
+    //console.log(e.target.value);
+    this.setState({
+      ...this.state,
+      size: e.target.value,
+      products: data.products.filter(product=> {
+        if(product.availableSizes.indexOf(e.target.value)>=0){
+          return product;
+        } 
+        
+      })
+    })
+  }
   render(){
     return (
       <div className="grid-container">
@@ -20,7 +54,12 @@ class App extends React.Component {
         </header>
         <section className="main">
             <div className="content">
-              <Filter filteredCount={this.state.products.length} />
+              <Filter filteredCount={this.state.products.length} 
+                size={this.state.size}
+                sort={this.state.sort}
+                filterProduct={this.filterProduct}
+                filterSize={this.filterSize}
+              />
               <Products products={this.state.products}/>
             </div>
             <div className="products-right">Sidebar</div>
