@@ -11,7 +11,13 @@ class App extends React.Component {
       products: data.products,
       size: "",
       sort: "",
-      cartItems: []
+      cartItems: localStorage.getItem("cart-items")?JSON.parse(localStorage.getItem("cart-items")):[],
+      contactDetails: {
+        email: '',
+        name: '',
+        phone: '',
+        address: ''
+      }
     }
   }
   filterProduct = (e)=>{
@@ -54,7 +60,8 @@ class App extends React.Component {
     this.setState({
       ...this.state,
       cartItems: cartItemsUpdated.filter(item => item._id!==product._id)
-    })
+    });
+    localStorage.setItem("cart-items",JSON.stringify(cartItemsUpdated.filter(item => item._id!==product._id)))
   }
   addToCart = (product)=>{
     const items = this.state.cartItems.slice();
@@ -70,6 +77,15 @@ class App extends React.Component {
       items.push(product);
     }
       this.setState({...this.state, cartItems:items})
+      localStorage.setItem("cart-items",JSON.stringify(items));
+  }
+  saveFormDetails = (formDetails)=>{
+    console.log(JSON.stringify(formDetails));
+    this.setState({
+      ...this.state,
+      contactDetails: formDetails
+    });
+    console.log(JSON.stringify(this.state.contactDetails));
   }
   render(){
     return (
@@ -92,6 +108,7 @@ class App extends React.Component {
             <div className="products-right">
               <Cart cartItems={this.state.cartItems} 
                 removeProduct={this.removeProduct}
+                saveFormDetails={this.saveFormDetails}
               />
             </div>
         </section>
