@@ -11,8 +11,6 @@ class App extends React.Component {
     super();
     this.state={
       products: data.products,
-      size: "",
-      sort: "",
       cartItems: localStorage.getItem("cart-items")?JSON.parse(localStorage.getItem("cart-items")):[],
       contactDetails: {
         email: '',
@@ -22,40 +20,7 @@ class App extends React.Component {
       }
     }
   }
-  filterProduct = (e)=>{
-    const sort = e.target.value;
-    this.setState({
-      sort: sort,
-      products: this.state.products.slice().sort((a,b)=>
-        sort==='lowest'?
-          a.price>b.price?
-            1:-1
-          : sort==='highest'?
-            a.price<b.price
-              ?
-                1:-1
-            :sort==='latest'?
-              a._id<b._id
-                ?
-                1:-1
-            :1
-      )
-    })
-    
-  }
-  filterSize=(e)=>{
-    //console.log(e.target.value);
-    this.setState({
-      ...this.state,
-      size: e.target.value,
-      products: data.products.filter(product=> {
-        if(product.availableSizes.indexOf(e.target.value)>=0){
-          return product;
-        } 
-        
-      })
-    })
-  }
+  
   removeProduct = (product)=>{
     const cartItemsUpdated = this.state.cartItems.slice();
 
@@ -98,11 +63,7 @@ class App extends React.Component {
         </header>
         <section className="main">
             <div className="content">
-              <Filter filteredCount={this.state.products.length} 
-                size={this.state.size}
-                sort={this.state.sort}
-                filterProduct={this.filterProduct}
-                filterSize={this.filterSize}
+              <Filter 
               />
               <Products 
                 addToCart={this.addToCart}
